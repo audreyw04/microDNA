@@ -1,29 +1,42 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Fx_NP1KI)
-# MicroDNA
-Using k-mers to search strings
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/mdusFg9r)
 
+# microDNA Detection
+Detection and validation of candidate microDNA circles using soft-clipped reads from aligned sequencing data.
 
-## Smith-Waterman
-### Usage
-```
-usage: kmer_idx.py [-h] [--kmer KMER] --reference REFERENCE [--read_size READ SIZE] --num_reads NUMBER OF READS [--error_rate ERROR RATE] [--max_mismatches MAX MISMATCHES] [--experiment EXPERIMENT]
+## Overview
+This pipeline identifies potential microDNA elements by detecting soft-clipped reads from a BAM file, clustering junction candidates, aligning clipped sequences, and scoring circle confidence based on microhomology and genomic distance. Final candidates are filtered based on read support and confidence thresholds.
+
+---
+
+## Usage
+
+### Detect Soft-Clipped Reads
+```bash
+usage: detecting.py --bam BAM_FILE [--min_clip MIN_CLIP] [--out OUT_FILE]
 
 optional arguments:
-  -h, --help                        show this help message and exit
-  --kmer KMER                       Kmer size (default=3)
-  --error_rate ERROR_RATE           Error rate (default=0.01)
-  --max_mismatches MAX_MISMATCHES   Maximum number of mismatches (default=3)
-  --experiment EXPERIMENT           Run k-mer size and error rate experiments
-```
-### Example
-```
-$ python3 src/kmer_idx.py 
-    --reference data/chr22.fa.gz 
-    --num_reads 5 
-    --experiment
+  --bam BAM_FILE     Input BAM file (indexed)
+  --min_clip         Minimum clip length (default: 10)
+  --out              Output TSV file for clipped reads (default: soft_clipped_reads.tsv)
 
-```
-<center><img src="alignment_score_vs_error.png" width="600"/></center>
-<center><img src="alignments_vs_kmer.png" width="600"/></center>
-<center><img src="runtime_vs_kmer.png" width="600"/></center>
+---
+
+## Validate Circles 
+
+```bash
+
+usage: validate_circles.py --circles CIRCLES_FILE --reads READS_FILE --start_positions START [START ...]
+
+optional arguments:
+  --circles          TSV file with candidate microDNA circles
+  --reads            TSV file with clipped reads from detection step
+  --start_positions  One or more start positions to validate (space-separated)
+
+## Example: Validating Circle Candidates
+```bash
+
+$ python validate_circles.py \
+    --circles microdna_circles.tsv \
+    --reads clips_12bp.tsv \
+    --start_positions 121485177 121485185 17912842
 
