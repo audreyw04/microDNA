@@ -1,0 +1,9 @@
+*.bam
+*.bai
+*.sam
+*.tsv
+*.parquet
+*.log
+__pycache__/
+data/
+results/
